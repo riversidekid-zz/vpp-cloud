@@ -136,7 +136,7 @@ restart-calicovpp:
 .PHONY: goapi
 export VPP_DIR ?= $(shell pwd)/vpp-manager/vpp_build
 goapi:
-	@./vpplink/binapi/generate_binapi.sh
+	@go generate -v ./vpplink/generated/
 
 .PHONY: cherry-vpp
 cherry-vpp:
@@ -145,7 +145,7 @@ cherry-vpp:
 	@echo "directory : ${VPP_DIR}"
 	@echo "branch    : $(shell cd ${VPP_DIR} && git branch --show-current)"
 	@echo "Are you sure? [y/N] " && read ans && [ $${ans:-N} = y ]
-	@bash ./vpplink/binapi/vpp_clone_current.sh ${VPP_DIR}
+	@bash ./vpplink/generated/vpp_clone_current.sh ${VPP_DIR}
 
 .PHONY: cherry-wipe
 cherry-wipe:
@@ -181,5 +181,5 @@ run-integration-tests:
 
 .PHONY: test
 test:
-	gofmt -s -l . | grep -v binapi | diff -u /dev/null -
+	gofmt -s -l . | grep -v generated | diff -u /dev/null -
 	go vet ./...
