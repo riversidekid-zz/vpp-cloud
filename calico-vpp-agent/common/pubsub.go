@@ -63,9 +63,6 @@ const (
 
 	IpamPoolUpdate CalicoVppEventType = "IpamPoolUpdate"
 	IpamPoolRemove CalicoVppEventType = "IpamPoolRemove"
-
-	NodeRouteUpdate CalicoVppEventType = "NodeRouteUpdate"
-	NodeRouteDelete CalicoVppEventType = "NodeRouteDelete"
 )
 
 var (

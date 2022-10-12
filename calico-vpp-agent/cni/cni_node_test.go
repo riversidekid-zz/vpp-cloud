@@ -558,7 +558,7 @@ var _ = Describe("Node-related functionality of CNI", func() {
 				connectivityServer.ForceProviderEnableDisable(connectivity.WIREGUARD, true) // creates the tunnel (this is normally called by Felix config change event handler)
 				addedNodePublicKey := "public-key-for-added-node"                           // max 32 characters due to VPP binapi
 				connectivityServer.ForceNodeAddition(common.LocalNodeSpec{
-					Name: AddedNodeName,
+					Name:               AddedNodeName,
 					WireguardPublicKey: base64.StdEncoding.EncodeToString([]byte(addedNodePublicKey)),
 				}, net.ParseIP(AddedNodeIP))
 				connectivityServer.UpdateIPConnectivity(&common.NodeConnectivity{
@@ -573,11 +573,11 @@ var _ = Describe("Node-related functionality of CNI", func() {
 				Expect(err).ToNot(HaveOccurred(), "can't find wireguard tunnel interface")
 				wgTunnel, err := vpp.GetWireguardTunnel(wireguardSwIfIndex)
 				Expect(err).ToNot(HaveOccurred(), "can't get wireguard tunnel from VPP")
+
 				Expect(wgTunnel.Port).To(Equal(uint16(felixConfig.WireguardListeningPort)),
 					"incorrectly set wireguard listening port")
 				Expect(wgTunnel.Addr).To(Equal(net.ParseIP(ThisNodeIP).To4()),
 					"incorrectly set IP address of this node's wireguard tunnel interface")
-
 				By("checking wireguard tunnel interface attributes (Unnumbered)")
 				assertUnnumberedInterface(wireguardSwIfIndex, "wireguard tunnel interface", vpp)
 
@@ -1004,9 +1004,13 @@ func assertNextNodeLink(node, linkedNextNode string, vpp *vpplink.VppLink) int {
 }
 
 func configureBGPNodeIPAddresses(connectivityServer *connectivity.ConnectivityServer) {
+	ip4, ip4net, _ := net.ParseCIDR(ThisNodeIP + "/24")
+	ip4net.IP = ip4
+	ip6, ip6net, _ := net.ParseCIDR(ThisNodeIPv6 + "/128")
+	ip6net.IP = ip6
 	connectivityServer.SetOurBGPSpec(&common.LocalNodeSpec{
-		IPv4Address: ThisNodeIP + "/24",
-		IPv6Address: ThisNodeIPv6 + "/128",
+		IPv4Address: ip4net,
+		IPv6Address: ip6net,
 	})
 }
 
