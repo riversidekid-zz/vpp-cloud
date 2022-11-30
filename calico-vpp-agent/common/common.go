@@ -64,6 +64,7 @@ type LocalNodeSpec struct {
 	IPv4Address        *net.IPNet
 	IPv6Address        *net.IPNet
 	WireguardPublicKey string
+	Synced             bool
 }
 
 // CreateVppLink creates new link to VPP and waits for VPP to be up and running (by using simple VPP API call)
